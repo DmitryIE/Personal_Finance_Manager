@@ -32,7 +32,7 @@ public class Client {
     // генерация случайных объектов Product
     public static Product generateProducts() {
         String[] names = new String[]{"булка", "колбаса", "сухарики", "курица", "тапки", "грибы", "алмазы"};
-        String[] localDates = new String[]{"2020.03.08", "2021.02.10", "2022.02.08", "2022.03.09", "2022.02.09", "2022.03.10", "2022.02.11"};
+        String[] localDates = new String[]{"2022.10.07", "2022.02.10", "2022.10.06", "2020.03.09", "2021.10.06", "2022.10.10", "2022.02.11"};
         double[] sum = new double[]{2000., 6000., 8000., 8450, 32444, 5000., 7000.};
         Random random = new Random();
         int number1 = random.nextInt(7);

@@ -7,10 +7,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataCategories {
 
@@ -19,6 +18,12 @@ public class DataCategories {
     private Map<String, List<Product>> productsForCategory;  // ключ - категория; значение - List из объектов типа Product
     @Expose
     private MaxCategory maxCategory;
+    @Expose
+    private MaxYearCategory maxYearCategory;
+    @Expose
+    private MaxMonthCategory maxMonthCategory;
+    @Expose
+    private MaxDayCategory maxDayCategory;
 
     public DataCategories() throws IOException {
         this.categories = loadCategories();
@@ -70,30 +75,148 @@ public class DataCategories {
     public void processing(Product product) {
         accept(product);
         findMaxCategory();
+        findMaxYearCategory();
+        findMaxMonthCategory();
+        findMaxDayCategory();
     }
 
-    // поиск категорий с максимальными суммами и создание на их основе объектов для отправки информации с сервера
     public void findMaxCategory() {
+        // создаем Map, содержащую только информацию о категории и общей сумме по ней
+        Map<String, Double> categorySum = new HashMap<>();
+        categorySum = productsForCategory.entrySet().stream()
+                .collect(Collectors.toMap(e -> (String) e.getKey(), e -> e.getValue().stream().mapToDouble(i -> i.getSum()).sum()));
+
+        // ищем максимальное значение
+        double maxValue = categorySum.entrySet().stream()
+                .map(e -> e.getValue())
+                .max(Double::compareTo)
+                .get();
+
+        //определяем категорию с максимальной суммой
+        for (String category : categorySum.keySet()) {
+            if (categorySum.get(category) == maxValue) {
+                maxCategory = new MaxCategory(category, maxValue);
+            }
+        }
+    }
+
+    public void findMaxYearCategory() {
+
+        // создаем отфильтрованный по году Map
+        Map<String, List<Product>> productsForCategoryFilter = new HashMap<>();
+        for (String category : productsForCategory.keySet()) {
+            List<Product> productList = new ArrayList<>();
+            for (Product element : productsForCategory.get(category)) {
+                if (element.getDate().getYear() == LocalDate.now().getYear()) {
+                    productList.add(element);
+                }
+            }
+            if (productList.size() > 0) {
+                productsForCategoryFilter.put(category, productList);
+            }
+        }
 
         // создаем Map, содержащую только информацию о категории и общей сумме по ней
-        // и в процессе определяем, какое значение максимальное
         Map<String, Double> categorySum = new HashMap<>();
-        double maxSum = 0.0;
-        for (String category : productsForCategory.keySet()) {
-            double sum = 0.0;
-            for (Product element : productsForCategory.get(category)) {
-                sum += element.getSum();
-            }
-            categorySum.put(category, sum);
-            if (sum > maxSum) {
-                maxSum = sum;
-            }
+
+        categorySum = productsForCategoryFilter.entrySet().stream()
+                .collect(Collectors.toMap(e -> (String) e.getKey(), e -> e.getValue().stream().mapToDouble(i -> i.getSum()).sum()));
+
+        // ищем максимальное значение
+        double maxValue = 0;
+        try {
+            maxValue = categorySum.entrySet().stream()
+                    .map(e -> e.getValue())
+                    .max(Double::compareTo)
+                    .get();
+        } catch (NoSuchElementException e) {
         }
 
         //определяем категорию с максимальной суммой
         for (String category : categorySum.keySet()) {
-            if (categorySum.get(category) == maxSum) {
-                maxCategory = new MaxCategory(category, maxSum);
+            if (categorySum.get(category) == maxValue) {
+                maxYearCategory = new MaxYearCategory(category, maxValue);
+            }
+        }
+    }
+
+    public void findMaxMonthCategory() {
+
+        // создаем отфильтрованный по году Map
+        Map<String, List<Product>> productsForCategoryFilter = new HashMap<>();
+        for (String category : productsForCategory.keySet()) {
+            List<Product> productList = new ArrayList<>();
+            for (Product element : productsForCategory.get(category)) {
+                if (element.getDate().getYear() == LocalDate.now().getYear() &&
+                        element.getDate().getMonth() == LocalDate.now().getMonth()) {
+                    productList.add(element);
+                }
+            }
+            if (productList.size() > 0) {
+                productsForCategoryFilter.put(category, productList);
+            }
+        }
+        // создаем Map, содержащую только информацию о категории и общей сумме по ней
+        Map<String, Double> categorySum = new HashMap<>();
+
+        categorySum = productsForCategoryFilter.entrySet().stream()
+                .collect(Collectors.toMap(e -> (String) e.getKey(), e -> e.getValue().stream().mapToDouble(i -> i.getSum()).sum()));
+
+        // ищем максимальное значение
+        double maxValue = 0;
+        try {
+            maxValue = categorySum.entrySet().stream()
+                    .map(e -> e.getValue())
+                    .max(Double::compareTo)
+                    .get();
+        } catch (NoSuchElementException e) {
+        }
+
+        //определяем категорию с максимальной суммой
+        for (String category : categorySum.keySet()) {
+            if (categorySum.get(category) == maxValue) {
+                maxMonthCategory = new MaxMonthCategory(category, maxValue);
+            }
+        }
+    }
+
+    public void findMaxDayCategory() {
+
+        // создаем отфильтрованный по году Map
+        Map<String, List<Product>> productsForCategoryFilter = new HashMap<>();
+        for (String category : productsForCategory.keySet()) {
+            List<Product> productList = new ArrayList<>();
+            for (Product element : productsForCategory.get(category)) {
+                if (element.getDate().getYear() == LocalDate.now().getYear() &&
+                        element.getDate().getMonth() == LocalDate.now().getMonth() &&
+                        element.getDate().getDayOfMonth() == LocalDate.now().getDayOfMonth()) {
+                    productList.add(element);
+                }
+            }
+            if (productList.size() > 0) {
+                productsForCategoryFilter.put(category, productList);
+            }
+        }
+        // создаем Map, содержащую только информацию о категории и общей сумме по ней
+        Map<String, Double> categorySum = new HashMap<>();
+
+        categorySum = productsForCategoryFilter.entrySet().stream()
+                .collect(Collectors.toMap(e -> (String) e.getKey(), e -> e.getValue().stream().mapToDouble(i -> i.getSum()).sum()));
+
+        // ищем максимальное значение
+        double maxValue = 0;
+        try {
+            maxValue = categorySum.entrySet().stream()
+                    .map(e -> e.getValue())
+                    .max(Double::compareTo)
+                    .get();
+        } catch (NoSuchElementException e) {
+        }
+
+        //определяем категорию с максимальной суммой
+        for (String category : categorySum.keySet()) {
+            if (categorySum.get(category) == maxValue) {
+                maxDayCategory = new MaxDayCategory(category, maxValue);
             }
         }
     }
@@ -111,7 +234,6 @@ public class DataCategories {
             return gson.fromJson(fileReader, DataCategories.class);
         }
     }
-
 
     // внутренний класс, описывающий объект с максимальной суммой по категории
     public class MaxCategory {
@@ -149,6 +271,45 @@ public class DataCategories {
 
             MaxCategory maxCategory = (MaxCategory) obj;
             return sum == maxCategory.sum && category.equals(maxCategory.category);
+        }
+    }
+
+    public class MaxYearCategory {
+
+        @Expose
+        private String category;
+        @Expose
+        private double sum;
+
+        public MaxYearCategory(String category, double sum) {
+            this.category = category;
+            this.sum = sum;
+        }
+    }
+
+    public class MaxMonthCategory {
+
+        @Expose
+        private String category;
+        @Expose
+        private double sum;
+
+        public MaxMonthCategory(String category, double sum) {
+            this.category = category;
+            this.sum = sum;
+        }
+    }
+
+    public class MaxDayCategory {
+
+        @Expose
+        private String category;
+        @Expose
+        private double sum;
+
+        public MaxDayCategory(String category, double sum) {
+            this.category = category;
+            this.sum = sum;
         }
     }
 }
