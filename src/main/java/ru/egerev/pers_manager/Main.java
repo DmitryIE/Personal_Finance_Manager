@@ -1,13 +1,15 @@
 package ru.egerev.pers_manager;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
 
@@ -15,7 +17,15 @@ public class Main {
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            DataCategories dataCategories = new DataCategories();
+
+            DataCategories dataCategories = null;
+
+            if (Files.exists(Paths.get("data.bin"))) {
+                dataCategories = DataCategories.loadDataCategories();
+            } else {
+                dataCategories = new DataCategories();
+            }
+
             while (true) {
                 try (Socket clientSocket = serverSocket.accept();
                      PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -27,16 +37,20 @@ public class Main {
 
                     // обрабатываем полученную информацию
                     dataCategories.processing(product);
-                    Gson gson = new Gson();
+                    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+                            .create();
                     String result = gson.toJson(dataCategories);
                     writer.println(result);
 
-                } catch (IOException e) {
+                    // сохраняем объект статистики
+                    dataCategories.saveDataCategories();
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

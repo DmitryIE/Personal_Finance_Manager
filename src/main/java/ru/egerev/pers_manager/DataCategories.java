@@ -1,7 +1,11 @@
 package ru.egerev.pers_manager;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,10 +14,10 @@ import java.util.Map;
 
 public class DataCategories {
 
-    private transient Map<String, String> categories;
+    private Map<String, String> categories;
 
-    private transient Map<String, List<Product>> productsForCategory;  // ключ - категория; значение - List из объектов типа Product
-
+    private Map<String, List<Product>> productsForCategory;  // ключ - категория; значение - List из объектов типа Product
+    @Expose
     private MaxCategory maxCategory;
 
     public DataCategories() throws IOException {
@@ -94,11 +98,27 @@ public class DataCategories {
         }
     }
 
+    public void saveDataCategories() throws Exception {
+        try (FileWriter fileWriter = new FileWriter("data.bin")) {
+            Gson gson = new Gson();
+            gson.toJson(this, fileWriter);
+        }
+    }
+
+    public static DataCategories loadDataCategories() throws Exception {
+        try (FileReader fileReader = new FileReader("data.bin")) {
+            Gson gson = new Gson();
+            return gson.fromJson(fileReader, DataCategories.class);
+        }
+    }
+
 
     // внутренний класс, описывающий объект с максимальной суммой по категории
     public class MaxCategory {
 
+        @Expose
         private String category;
+        @Expose
         private double sum;
 
         public MaxCategory(String category, double sum) {
@@ -106,6 +126,7 @@ public class DataCategories {
             this.sum = sum;
         }
 
+        // для проведения тестов
         @Override
         public int hashCode() {
             int result = category == null ? 0 : category.hashCode();
@@ -113,6 +134,8 @@ public class DataCategories {
             return result;
         }
 
+
+        // для проведения тестов
         @Override
         public boolean equals(Object obj) {
 
