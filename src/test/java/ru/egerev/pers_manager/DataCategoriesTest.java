@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DataCategoriesTest {
 
     @DisplayName("Проверка определения категории продукта")
@@ -27,21 +30,9 @@ public class DataCategoriesTest {
         Assertions.assertEquals(1, difference);
     }
 
-    @DisplayName("Провека обработки нового продукта")
+    @DisplayName("Проверка поиска максимальной категории по сумме")
     @Test
-    public void TestProcessing() throws Exception {
-        DataCategories dataCategories = new DataCategories();
-        String resultExpected = "{\"maxCategory\":{\"category\":\"другое\",\"sum\":8000.0}}";
-        Product product = new Product("греча", "2029.10.05", 8000.);
-        dataCategories.processing(product);
-        Gson gson = new Gson();
-        String resultActual = gson.toJson(dataCategories);
-        Assertions.assertEquals(resultExpected, resultActual);
-    }
-
-    @DisplayName("Провека поиска максимальной категории по сумме")
-    @Test
-    public void findMaxCategory() throws Exception{
+    public void findMaxCategory() throws Exception {
         DataCategories dataCategories = new DataCategories();
         Product product = new Product("греча", "2029.10.05", 8000.);
         dataCategories.processing(product);
