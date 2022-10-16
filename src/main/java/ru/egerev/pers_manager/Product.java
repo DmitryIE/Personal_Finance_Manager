@@ -8,12 +8,12 @@ import java.time.format.DateTimeFormatter;
 public class Product {
 
     private String title;
-    private LocalDate date;
+    private String date;
     private double sum;
 
     public Product(String title, String date, Double sum) {
         this.title = title;
-        this.date = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        this.date = date;
         this.sum = sum;
     }
 
@@ -21,7 +21,7 @@ public class Product {
         return title;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 

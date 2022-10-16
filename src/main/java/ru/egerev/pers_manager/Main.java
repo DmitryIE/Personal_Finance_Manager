@@ -33,7 +33,10 @@ public class Main {
                              (new InputStreamReader(clientSocket.getInputStream()))) {
 
                     System.out.println("New connection accepted");
+
+
                     Product product = Product.loadJson(reader.readLine());
+                    System.out.println(product.toString());
 
                     // обрабатываем полученную информацию
                     dataCategories.processing(product);

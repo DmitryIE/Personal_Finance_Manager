@@ -19,8 +19,8 @@ public class Client {
 
             Product product = generateProducts();
             writer.println(product.saveToJson());
+            System.out.println(product.saveToJson().toString());
 
-            System.out.println(product);
             System.out.println(reader.readLine());
 
 
@@ -32,7 +32,7 @@ public class Client {
     // генерация случайных объектов Product
     public static Product generateProducts() {
         String[] names = new String[]{"булка", "колбаса", "сухарики", "курица", "тапки", "грибы", "алмазы"};
-        String[] localDates = new String[]{"2022.10.07", "2022.02.10", "2022.10.06", "2020.03.09", "2021.10.06", "2022.10.10", "2022.02.11"};
+        String[] localDates = new String[]{"2022.10.07", "2022.02.10", "2022.10.16", "2020.03.09", "2021.10.16", "2022.10.16", "2022.02.11"};
         double[] sum = new double[]{2000., 6000., 8000., 8450, 32444, 5000., 7000.};
         Random random = new Random();
         int number1 = random.nextInt(7);

@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -107,7 +108,8 @@ public class DataCategories {
         for (String category : productsForCategory.keySet()) {
             List<Product> productList = new ArrayList<>();
             for (Product element : productsForCategory.get(category)) {
-                if (element.getDate().getYear() == LocalDate.now().getYear()) {
+                LocalDate dateProduct = LocalDate.parse(element.getDate(), DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                if (dateProduct.getYear() == LocalDate.now().getYear()) {
                     productList.add(element);
                 }
             }
@@ -147,8 +149,9 @@ public class DataCategories {
         for (String category : productsForCategory.keySet()) {
             List<Product> productList = new ArrayList<>();
             for (Product element : productsForCategory.get(category)) {
-                if (element.getDate().getYear() == LocalDate.now().getYear() &&
-                        element.getDate().getMonth() == LocalDate.now().getMonth()) {
+                LocalDate dateProduct = LocalDate.parse(element.getDate(), DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                if (dateProduct.getYear() == LocalDate.now().getYear() &&
+                        dateProduct.getMonth() == LocalDate.now().getMonth()) {
                     productList.add(element);
                 }
             }
@@ -187,9 +190,10 @@ public class DataCategories {
         for (String category : productsForCategory.keySet()) {
             List<Product> productList = new ArrayList<>();
             for (Product element : productsForCategory.get(category)) {
-                if (element.getDate().getYear() == LocalDate.now().getYear() &&
-                        element.getDate().getMonth() == LocalDate.now().getMonth() &&
-                        element.getDate().getDayOfMonth() == LocalDate.now().getDayOfMonth()) {
+                LocalDate dateProduct = LocalDate.parse(element.getDate(), DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                if (dateProduct.getYear() == LocalDate.now().getYear() &&
+                        dateProduct.getMonth() == LocalDate.now().getMonth() &&
+                        dateProduct.getDayOfMonth() == LocalDate.now().getDayOfMonth()) {
                     productList.add(element);
                 }
             }
